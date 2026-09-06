@@ -7,6 +7,15 @@ namespace SaveLoadSystemBL
         public const string CONFIG_FOLDER_NAME = "config";
         public const string CONFIG_FILE_EXTENCION = ".json";
 
+        static SaveLoadSystem()
+        {
+            JsonSerializerSettings = new JsonSerializerSettings()
+            {
+                MissingMemberHandling = MissingMemberHandling.Error
+            };
+        }
+
+        public static JsonSerializerSettings JsonSerializerSettings { get; }
         public static string RootFolder => AppDomain.CurrentDomain.BaseDirectory;
         public static string ConfigFolder => Path.GetFullPath(Path.Combine(RootFolder, CONFIG_FOLDER_NAME));
 
@@ -39,7 +48,7 @@ namespace SaveLoadSystemBL
             ArgumentNullException.ThrowIfNull(fileNameWithoutExtension);
             ArgumentNullException.ThrowIfNull(defaultValue);
             if (!IsValidFileName(fileNameWithoutExtension))
-                throw new ArgumentException("Неправильное имя файла");
+                throw new ArgumentException("Имя файла содержит спец. символы");
 
             string filePath = GetFilePath(fileNameWithoutExtension);
             if (!File.Exists(filePath))
@@ -51,7 +60,7 @@ namespace SaveLoadSystemBL
             try
             {
                 string json = File.ReadAllText(filePath);
-                T data = JsonConvert.DeserializeObject<T>(json) ?? throw new ArgumentNullException($@"Содержимое файла было '{json}'");
+                T data = JsonConvert.DeserializeObject<T>(json, JsonSerializerSettings) ?? throw new ArgumentNullException($@"Содержимое файла было '{json}'");
                 messageAgent?.Invoke($"Файл '{Path.GetFileName(filePath)}' загружен");
                 return data;
             }

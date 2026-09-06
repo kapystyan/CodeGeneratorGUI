@@ -8,6 +8,6 @@ public interface IMainForm
 
     event Action<CodeGeneratorSettings>? OnGenerate;
 
-    void ShowCodes<T>(T codes) where T : IEnumerable<string>;
+    void ShowCodes(string codes);
     void ShowMessage(string message);
 }

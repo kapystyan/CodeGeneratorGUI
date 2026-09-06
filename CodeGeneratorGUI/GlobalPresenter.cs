@@ -12,13 +12,24 @@ public class GlobalPresenter
         _mainForm = mainForm;
         _codeGenerator = codeGenerator;
 
+        _codeGenerator.MessageAgent += _mainForm.ShowMessage;
+        _codeGenerator.Settings.MessageAgent += _mainForm.ShowMessage;
+
         _mainForm.OnGenerate += MainForm_OnGenerate;
     }
 
     private void MainForm_OnGenerate(CodeGeneratorSettings settings)
     {
-        _codeGenerator.Settings = settings;
-        _mainForm.ShowCodes(_codeGenerator.GetCodeList());
-        _mainForm.Settings = settings;
+        List<string> codes = _codeGenerator.GetCodeList();
+        if (codes.Count == 1)
+        {
+            _mainForm.ShowCodes(codes[0]);
+            return;
+        }
+
+        string result = string.Empty;
+        foreach (string code in codes)
+            result += $@"{settings.Prefix}{code}{Environment.NewLine}";
+        _mainForm.ShowCodes(result);
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace CodeGeneratorBL;
 
-public sealed class CodeGeneratorSettings
+public class CodeGeneratorSettings
 {
     #region consts
     public const string Symbol_WHITE_LIST_DEFAULT = "";
@@ -12,25 +12,41 @@ public sealed class CodeGeneratorSettings
     public const int LIST_LENGHT_MIN = 1;
     public const int LIST_LENGHT_MAX = 1024;
     public const int LIST_LENGHT_DEFAULT = 1;
+
+    public const string PREFIX_DEFAULT = "";
     #endregion
 
     private static readonly CodeGeneratorSettings _default;
 
+    private string _symbolWhiteList;
+    private string _prefix;
     private int _codeLenght;
     private int _listLenght;
 
     static CodeGeneratorSettings()
     {
-        _default = new()
-        {
-            SymbolWhiteList = Symbol_WHITE_LIST_DEFAULT,
-            CodeLenght = CODE_LENGHT_DEFAULT,
-            ListLenght = LIST_LENGHT_DEFAULT
-        };
+        _default = new(Symbol_WHITE_LIST_DEFAULT, PREFIX_DEFAULT, CODE_LENGHT_DEFAULT, LIST_LENGHT_DEFAULT);
     }
 
-    public required string SymbolWhiteList { get; set; }
-    public required int CodeLenght
+    public CodeGeneratorSettings(string symbolWhiteList, string prefix, int codeLenght, int listLenght)
+    {
+        _symbolWhiteList = symbolWhiteList;
+        _prefix = prefix;
+        _codeLenght = codeLenght;
+        _listLenght = listLenght;
+    }
+
+    public string SymbolWhiteList
+    {
+        get => _symbolWhiteList;
+        set => _symbolWhiteList = value is not null ? value : Symbol_WHITE_LIST_DEFAULT;
+    }
+    public string Prefix
+    {
+        get => _prefix;
+        set => _prefix = value is not null ? value : PREFIX_DEFAULT;
+    }
+    public int CodeLenght
     {
         get => _codeLenght;
         set
@@ -44,7 +60,7 @@ public sealed class CodeGeneratorSettings
             }
         }
     }
-    public required int ListLenght
+    public int ListLenght
     {
         get => _listLenght;
         set
@@ -59,7 +75,7 @@ public sealed class CodeGeneratorSettings
         }
     }
 
-    public static event Action<string>? MessageAgent;
+    public event Action<string>? MessageAgent;
 
     public static CodeGeneratorSettings GetDefault()
     {

@@ -30,6 +30,8 @@
         {
             components = new System.ComponentModel.Container();
             GroupBox groupBox1;
+            Label label8;
+            Label label7;
             Label label6;
             Label label5;
             Label label4;
@@ -37,6 +39,7 @@
             Label label2;
             Label label1;
             ToolTip _memo;
+            _codePrefix = new TextBox();
             _clearTerminal = new Button();
             _terminal = new TextBox();
             _start = new Button();
@@ -48,6 +51,8 @@
             _viewport = new TextBox();
             _clearViewport = new Button();
             groupBox1 = new GroupBox();
+            label8 = new Label();
+            label7 = new Label();
             label6 = new Label();
             label5 = new Label();
             label4 = new Label();
@@ -61,6 +66,9 @@
             // groupBox1
             // 
             groupBox1.BackColor = Color.FromArgb(43, 139, 223);
+            groupBox1.Controls.Add(label8);
+            groupBox1.Controls.Add(_codePrefix);
+            groupBox1.Controls.Add(label7);
             groupBox1.Controls.Add(_clearTerminal);
             groupBox1.Controls.Add(label6);
             groupBox1.Controls.Add(label5);
@@ -82,6 +90,35 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "настройки";
             // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(97, 138);
+            label8.Name = "label8";
+            label8.Size = new Size(12, 15);
+            label8.TabIndex = 19;
+            label8.Text = "?";
+            _memo.SetToolTip(label8, "Префикс перед кодом");
+            // 
+            // _codePrefix
+            // 
+            _codePrefix.BackColor = Color.FromArgb(17, 68, 115);
+            _codePrefix.BorderStyle = BorderStyle.None;
+            _codePrefix.ForeColor = Color.White;
+            _codePrefix.Location = new Point(115, 138);
+            _codePrefix.Name = "_codePrefix";
+            _codePrefix.Size = new Size(111, 16);
+            _codePrefix.TabIndex = 18;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(6, 138);
+            label7.Name = "label7";
+            label7.Size = new Size(60, 15);
+            label7.TabIndex = 17;
+            label7.Text = "Префикс";
+            // 
             // _clearTerminal
             // 
             _clearTerminal.BackColor = Color.FromArgb(17, 68, 115);
@@ -98,7 +135,7 @@
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(97, 124);
+            label6.Location = new Point(97, 116);
             label6.Name = "label6";
             label6.Size = new Size(12, 15);
             label6.TabIndex = 15;
@@ -159,7 +196,7 @@
             _codeLenght.BackColor = Color.FromArgb(17, 68, 115);
             _codeLenght.BorderStyle = BorderStyle.None;
             _codeLenght.ForeColor = Color.White;
-            _codeLenght.Location = new Point(115, 123);
+            _codeLenght.Location = new Point(115, 116);
             _codeLenght.MaxLength = 2;
             _codeLenght.Name = "_codeLenght";
             _codeLenght.Size = new Size(111, 16);
@@ -210,7 +247,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(6, 123);
+            label1.Location = new Point(6, 116);
             label1.Name = "label1";
             label1.Size = new Size(51, 15);
             label1.TabIndex = 1;
@@ -311,5 +348,6 @@
         private Button _clearViewport;
         private CheckBox _isAddToCodeList;
         private Button _copyViewport;
+        private TextBox _codePrefix;
     }
 }

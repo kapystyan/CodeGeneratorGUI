@@ -6,25 +6,14 @@ namespace CodeGeneratorGUI;
 public partial class MainForm : Form, IMainForm
 {
     public const string GUIDATA_FILE_NAME = "settings";
-    private static GUIData _guidata;
-    private readonly CodeGeneratorSettings _settings;
+    private CodeGeneratorSettings _settings;
 
-    static MainForm()
-    {
-        _guidata = GUIData.GetDefault();
-    }
     public MainForm()
     {
         InitializeComponent();
-
-        CodeGenerator.MessageAgent += ShowMessage;
-        CodeGeneratorSettings.MessageAgent += ShowMessage;
-
-        _guidata = SaveLoadSystem<GUIData>.Load(GUIDATA_FILE_NAME, GUIData.GetDefault(), ShowMessage);
-        _settings = _guidata.Settings;
+        
+        _settings = SaveLoadSystem<CodeGeneratorSettings>.Load(GUIDATA_FILE_NAME, CodeGeneratorSettings.GetDefault(), ShowMessage);
         Settings = _settings;
-        _viewport.Text = _guidata.Viewport;
-        _isAddToCodeList.Checked = _guidata.IsAddToCodeList;
     }
 
     #region IMainForm
@@ -33,19 +22,19 @@ public partial class MainForm : Form, IMainForm
         get
         {
             _settings.SymbolWhiteList = _symbolWhiteList.Text;
+            _settings.Prefix = _codePrefix.Text;
             _settings.ListLenght = int.Parse(_listLenght.Text);
             _settings.CodeLenght = int.Parse(_codeLenght.Text);
+
             return _settings;
         }
         set
         {
             ArgumentNullException.ThrowIfNull(value);
 
-            _settings.SymbolWhiteList = value.SymbolWhiteList;
-            _settings.ListLenght = value.ListLenght;
-            _settings.CodeLenght = value.CodeLenght;
-
+            _settings = value;
             _symbolWhiteList.Text = _settings.SymbolWhiteList;
+            _codePrefix.Text = _settings.Prefix;
             _listLenght.Text = _settings.ListLenght.ToString();
             _codeLenght.Text = _settings.CodeLenght.ToString();
         }
@@ -53,10 +42,9 @@ public partial class MainForm : Form, IMainForm
 
     public event Action<CodeGeneratorSettings>? OnGenerate;
 
-    public void ShowCodes<T>(T codes) where T : IEnumerable<string>
+    public void ShowCodes(string codes)
     {
-        foreach (string code in codes)
-            _viewport.Text += $"{code}{Environment.NewLine}";
+        _viewport.Text = codes;
     }
     public void ShowMessage(string message)
     {
@@ -72,13 +60,11 @@ public partial class MainForm : Form, IMainForm
     }
     private void Start_BT_Click(object? sender, EventArgs e)
     {
-        if (!_isAddToCodeList.Checked)
-            ClearViewPort();
-        OnGenerate?.Invoke(Settings);
+        Generate();
     }
     private void CopyViewport_Click(object? sender, EventArgs e)
     {
-        Copy(_viewport.Text);
+        CopyViewport(_viewport.Text);
     }
     private void ClearViewport_BT_Click(object? sender, EventArgs e)
     {
@@ -90,15 +76,21 @@ public partial class MainForm : Form, IMainForm
     }
     private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
     {
-        _guidata.Settings = Settings;
-        _guidata.Viewport = _viewport.Text;
-        _guidata.IsAddToCodeList = _isAddToCodeList.Checked;
-
-        SaveLoadSystem<GUIData>.Save(_guidata, GUIDATA_FILE_NAME, ShowMessage);
+        SaveSettings();
     }
     #endregion
 
-    private void Copy(string value)
+    private void Generate()
+    {
+        if (!_isAddToCodeList.Checked)
+            ClearViewPort();
+        OnGenerate?.Invoke(Settings);
+    }
+    private void SaveSettings()
+    {
+        SaveLoadSystem<CodeGeneratorSettings>.Save(Settings, GUIDATA_FILE_NAME);
+    }
+    private void CopyViewport(string value)
     {
         if (string.IsNullOrEmpty(value))
         {

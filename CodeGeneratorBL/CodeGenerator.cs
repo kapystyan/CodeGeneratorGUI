@@ -10,9 +10,10 @@ public class CodeGenerator
     {
         _random = new();
     }
-    public CodeGenerator()
+    public CodeGenerator(Action<string>? messageAgent = null)
     {
         _settings = CodeGeneratorSettings.GetDefault();
+        MessageAgent = messageAgent;
     }
 
     public CodeGeneratorSettings Settings
@@ -23,18 +24,26 @@ public class CodeGenerator
             ArgumentNullException.ThrowIfNull(value);
 
             _settings.SymbolWhiteList = value.SymbolWhiteList;
+            _settings.Prefix = value.Prefix;
             _settings.ListLenght = value.ListLenght;
             _settings.CodeLenght = value.CodeLenght;
         }
     }
 
-    public static event Action<string>? MessageAgent;
+    public event Action<string>? MessageAgent;
 
+    /// <summary>
+    /// Генерирует список кодов используя GetCode(). Гарантирует что все коды уникальные: при повторении кода замещает его другим до количества, указанном в MAX_ITERATION_IF_CODE_REPEAT
+    /// </summary>
+    /// <returns>Список уникальных кодов, если список символов для генерации пуст, возвращает пустой список</returns>
     public List<string> GetCodeList()
     {
         List<string> codes = [];
         string code;
         int repeatCount = 0;
+
+        if (GetCode() == string.Empty)
+            return [];
 
         for (int i = 0; i < Settings.ListLenght; i++)
         {
@@ -56,11 +65,14 @@ public class CodeGenerator
             codes.Add(code);
         }
 
-        if (codes.Count != 0)
-            MessageAgent?.Invoke($@"Сгенерированно '{codes.Count}' кодов");
+        MessageAgent?.Invoke($@"Сгенерированно '{codes.Count}' кодов");
 
         return codes;
     }
+    /// <summary>
+    /// Генерирует код из символов указанных в Settings
+    /// </summary>
+    /// <returns>string.Empty если список символов пуст, иначе код</returns>
     public string GetCode()
     {
         if (Settings.SymbolWhiteList.Length == 0)
