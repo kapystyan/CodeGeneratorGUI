@@ -13,6 +13,7 @@ public partial class MainForm : Form, IMainForm
         InitializeComponent();
         
         _settings = SaveLoadSystem<CodeGeneratorSettings>.Load(GUIDATA_FILE_NAME, CodeGeneratorSettings.GetDefault(), ShowMessage);
+        _settings.MessageAgent += ShowMessage;
         Settings = _settings;
     }
 
@@ -32,7 +33,11 @@ public partial class MainForm : Form, IMainForm
         {
             ArgumentNullException.ThrowIfNull(value);
 
-            _settings = value;
+            _settings.SymbolWhiteList = value.SymbolWhiteList;
+            _settings.Prefix = value.Prefix;
+            _settings.ListLenght = value.ListLenght;
+            _settings.CodeLenght = value.CodeLenght;
+
             _symbolWhiteList.Text = _settings.SymbolWhiteList;
             _codePrefix.Text = _settings.Prefix;
             _listLenght.Text = _settings.ListLenght.ToString();

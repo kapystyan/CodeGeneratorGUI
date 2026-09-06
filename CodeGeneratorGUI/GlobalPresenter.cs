@@ -10,16 +10,18 @@ public class GlobalPresenter
     public GlobalPresenter(IMainForm mainForm, CodeGenerator codeGenerator)
     {
         _mainForm = mainForm;
+
         _codeGenerator = codeGenerator;
 
         _codeGenerator.MessageAgent += _mainForm.ShowMessage;
-        _codeGenerator.Settings.MessageAgent += _mainForm.ShowMessage;
 
         _mainForm.OnGenerate += MainForm_OnGenerate;
     }
 
     private void MainForm_OnGenerate(CodeGeneratorSettings settings)
     {
+        _codeGenerator.Settings = settings;
+
         List<string> codes = _codeGenerator.GetCodeList();
         if (codes.Count == 1)
         {
