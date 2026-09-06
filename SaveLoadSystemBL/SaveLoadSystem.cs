@@ -29,19 +29,19 @@ namespace SaveLoadSystemBL
             if (!Directory.Exists(ConfigFolder))
             {
                 Directory.CreateDirectory(ConfigFolder);
-                messageAgent?.Invoke($@"Директория '{ConfigFolder}' восстановлена");
+                messageAgent?.Invoke($"Директория '{ConfigFolder}' восстановлена");
             }
 
             string filePath = GetFilePath(fileNameWithoutExtension);
             if (!File.Exists(filePath))
             {
                 File.Create(filePath).Close();
-                messageAgent?.Invoke($@"Файл '{Path.GetFileName(filePath)}' создан");
+                messageAgent?.Invoke($"Файл '{Path.GetFileName(filePath)}' создан");
             }
 
             string json = JsonConvert.SerializeObject(data, Formatting.Indented);
             File.WriteAllText(filePath, json);
-            messageAgent?.Invoke($@"Файл '{Path.GetFileName(filePath)}' сохранен");
+            messageAgent?.Invoke($"Файл '{Path.GetFileName(filePath)}' сохранен");
         }
         public static T Load(string fileNameWithoutExtension, T defaultValue, Action<string>? messageAgent = null)
         {
@@ -53,7 +53,7 @@ namespace SaveLoadSystemBL
             string filePath = GetFilePath(fileNameWithoutExtension);
             if (!File.Exists(filePath))
             {
-                messageAgent?.Invoke($@"Файл '{Path.GetFileName(filePath)}' не найден");
+                messageAgent?.Invoke($"Файл '{Path.GetFileName(filePath)}' не найден");
                 Save(defaultValue, fileNameWithoutExtension, messageAgent);
             }
 
@@ -66,8 +66,8 @@ namespace SaveLoadSystemBL
             }
             catch (Exception e)
             {
-                messageAgent?.Invoke($@"Загрузка файла '{Path.GetFileName(filePath)}' прервалась с сообщением: {e.Message}{Environment.NewLine}Восстановленно значение по умолчанию");
                 Save(defaultValue, fileNameWithoutExtension);
+                messageAgent?.Invoke($"Загрузка файла '{Path.GetFileName(filePath)}' прервалась с сообщением: {e.Message.Replace("\0", @"\0")}{Environment.NewLine}Восстановленно значение по умолчанию");
                 return defaultValue;
             }
         }

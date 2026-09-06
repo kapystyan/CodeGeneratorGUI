@@ -1,29 +1,43 @@
 using CodeGeneratorBL;
-using SaveLoadSystemBL;
 
 namespace CodeGeneratorGUI;
 
 public partial class MainForm : Form, IMainForm
 {
-    public const string GUIDATA_FILE_NAME = "settings";
+    private MainFormDisplayData _displayData;
     private CodeGeneratorSettings _settings;
 
     public MainForm()
     {
         InitializeComponent();
-        
-        _settings = SaveLoadSystem<CodeGeneratorSettings>.Load(GUIDATA_FILE_NAME, CodeGeneratorSettings.GetDefault(), ShowMessage);
-        _settings.MessageAgent += ShowMessage;
-        Settings = _settings;
+
+        _displayData = MainFormDisplayData.GetDefault();
+        _settings = CodeGeneratorSettings.GetDefault();
     }
 
     #region IMainForm
+    public MainFormDisplayData DisplayData
+    {
+        get
+        {
+            _displayData.Viewport = _viewport.Text;
+            _displayData.IsAddToCodeList = _isAddToCodeList.Checked;
+
+            return _displayData;
+        }
+        set
+        {
+            _displayData = value is not null ? value : MainFormDisplayData.GetDefault();
+
+            _viewport.Text = _displayData.Viewport;
+            _isAddToCodeList.Checked = _displayData.IsAddToCodeList;
+        }
+    }
     public CodeGeneratorSettings Settings
     {
         get
         {
             _settings.SymbolWhiteList = _symbolWhiteList.Text;
-            _settings.Prefix = _codePrefix.Text;
             _settings.ListLenght = int.Parse(_listLenght.Text);
             _settings.CodeLenght = int.Parse(_codeLenght.Text);
 
@@ -31,25 +45,25 @@ public partial class MainForm : Form, IMainForm
         }
         set
         {
-            ArgumentNullException.ThrowIfNull(value);
-
-            _settings.SymbolWhiteList = value.SymbolWhiteList;
-            _settings.Prefix = value.Prefix;
-            _settings.ListLenght = value.ListLenght;
-            _settings.CodeLenght = value.CodeLenght;
+            _settings = value is not null ? value : CodeGeneratorSettings.GetDefault();
 
             _symbolWhiteList.Text = _settings.SymbolWhiteList;
-            _codePrefix.Text = _settings.Prefix;
             _listLenght.Text = _settings.ListLenght.ToString();
             _codeLenght.Text = _settings.CodeLenght.ToString();
         }
     }
 
     public event Action<CodeGeneratorSettings>? OnGenerate;
+    public event Action<MainFormDisplayData, CodeGeneratorSettings>? OnSaveUIData;
 
     public void ShowCodes(string codes)
     {
-        _viewport.Text = codes;
+        if (!_isAddToCodeList.Checked)
+            ClearViewPort();
+
+        _viewport.Text += codes;
+        _viewport.SelectionStart = _viewport.Text.Length;
+        _viewport.ScrollToCaret();
     }
     public void ShowMessage(string message)
     {
@@ -87,13 +101,11 @@ public partial class MainForm : Form, IMainForm
 
     private void Generate()
     {
-        if (!_isAddToCodeList.Checked)
-            ClearViewPort();
         OnGenerate?.Invoke(Settings);
     }
     private void SaveSettings()
     {
-        SaveLoadSystem<CodeGeneratorSettings>.Save(Settings, GUIDATA_FILE_NAME);
+        OnSaveUIData?.Invoke(DisplayData, Settings);
     }
     private void CopyViewport(string value)
     {

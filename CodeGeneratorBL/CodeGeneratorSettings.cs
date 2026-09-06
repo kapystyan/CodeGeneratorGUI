@@ -55,7 +55,7 @@ public class CodeGeneratorSettings
                 _codeLenght = value;
             else
             {
-                MessageAgent?.Invoke($@"Присваемое значение '{value}' для длинны кода вне диапазона {CODE_LENGHT_MIN}-{CODE_LENGHT_MAX}, присвоено значение по умолчанию '{CODE_LENGHT_DEFAULT}'");
+                MessageAgent?.Invoke($"Присваемое значение '{value}' для длинны кода вне диапазона {CODE_LENGHT_MIN}-{CODE_LENGHT_MAX}, присвоено значение по умолчанию '{CODE_LENGHT_DEFAULT}'");
                 _codeLenght = CODE_LENGHT_DEFAULT;
             }
         }
@@ -69,7 +69,7 @@ public class CodeGeneratorSettings
                 _listLenght = value;
             else
             {
-                MessageAgent?.Invoke($@"Присваемое значение '{value}' для количества кодов вне диапазона {LIST_LENGHT_MIN}-{LIST_LENGHT_MAX}, присвоено значение по умолчанию '{LIST_LENGHT_DEFAULT}'");
+                MessageAgent?.Invoke($"Присваемое значение '{value}' для количества кодов вне диапазона {LIST_LENGHT_MIN}-{LIST_LENGHT_MAX}, присвоено значение по умолчанию '{LIST_LENGHT_DEFAULT}'");
                 _listLenght = LIST_LENGHT_DEFAULT;
             }
         }

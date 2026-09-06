@@ -32,10 +32,6 @@ public class CodeGenerator
 
     public event Action<string>? MessageAgent;
 
-    /// <summary>
-    /// Генерирует список кодов используя GetCode(). Гарантирует что все коды уникальные: при повторении кода замещает его другим до количества, указанном в MAX_ITERATION_IF_CODE_REPEAT
-    /// </summary>
-    /// <returns>Список уникальных кодов, если список символов для генерации пуст, возвращает пустой список</returns>
     public List<string> GetCodeList()
     {
         List<string> codes = [];
@@ -69,10 +65,6 @@ public class CodeGenerator
 
         return codes;
     }
-    /// <summary>
-    /// Генерирует код из символов указанных в Settings
-    /// </summary>
-    /// <returns>string.Empty если список символов пуст, иначе код</returns>
     public string GetCode()
     {
         if (Settings.SymbolWhiteList.Length == 0)
